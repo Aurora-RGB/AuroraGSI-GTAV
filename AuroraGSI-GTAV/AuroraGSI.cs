@@ -12,8 +12,8 @@ namespace AuroraGSI_GTAV
     public class AuroraGSI : Script
     {
         private const string URI = "http://localhost:9088";
-        private Timer requestTimer;
-        private HttpClient http;
+        private readonly Timer requestTimer;
+        private readonly HttpClient http;
         private readonly GSINode node = new GSINode();
         private string last = "";
 
@@ -23,14 +23,17 @@ namespace AuroraGSI_GTAV
             Tick += AuroraGSI_Tick;
             Logger.Log("Start");
             http = new HttpClient();
-            requestTimer = new Timer(100);
-            requestTimer.Enabled = true;
-            requestTimer.AutoReset = true;
+            requestTimer = new Timer()
+            {
+                Interval = 100,
+                Enabled = true
+            };
             requestTimer.Elapsed += (a, b) => SendGameState();
             requestTimer.Start();
+            //might want to remove this later, useful for debugging though
             JsonConvert.DefaultSettings = () => new JsonSerializerSettings()
             {
-                Converters = new List<Newtonsoft.Json.JsonConverter>() { new Newtonsoft.Json.Converters.StringEnumConverter() }
+                Converters = new List<JsonConverter>() { new Newtonsoft.Json.Converters.StringEnumConverter() }
             };
         }
 
@@ -59,94 +62,86 @@ namespace AuroraGSI_GTAV
             node.Player.Name = Game.Player.Name;
             #endregion
             #region weapon
-            node.Player.CurrentWeapon.CanUseOnParachute = Game.Player.Character.Weapons.Current.CanUseOnParachute;
-            node.Player.CurrentWeapon.IsPresent = Game.Player.Character.Weapons.Current.IsPresent;
-            node.Player.CurrentWeapon.Ammo = Game.Player.Character.Weapons.Current.Ammo;
-            node.Player.CurrentWeapon.AmmoInClip = Game.Player.Character.Weapons.Current.AmmoInClip;
-            node.Player.CurrentWeapon.DefaultClipSize = Game.Player.Character.Weapons.Current.DefaultClipSize;
-            node.Player.CurrentWeapon.MaxAmmo = Game.Player.Character.Weapons.Current.MaxAmmo;
-            node.Player.CurrentWeapon.MaxAmmoInClip = Game.Player.Character.Weapons.Current.MaxAmmoInClip;
-            node.Player.CurrentWeapon.DisplayName = Game.Player.Character.Weapons.Current.DisplayName;
-            node.Player.CurrentWeapon.LocalizedName = Game.Player.Character.Weapons.Current.LocalizedName;
-            node.Player.CurrentWeapon.Group = Game.Player.Character.Weapons.Current.Group;
-            node.Player.CurrentWeapon.Hash = Game.Player.Character.Weapons.Current.Hash;
-            node.Player.CurrentWeapon.Tint = Game.Player.Character.Weapons.Current.Tint;
+            node.CurrentWeapon.CanUseOnParachute = Game.Player.Character.Weapons.Current.CanUseOnParachute;
+            node.CurrentWeapon.IsPresent = Game.Player.Character.Weapons.Current.IsPresent;
+            node.CurrentWeapon.Ammo = Game.Player.Character.Weapons.Current.Ammo;
+            node.CurrentWeapon.AmmoInClip = Game.Player.Character.Weapons.Current.AmmoInClip;
+            node.CurrentWeapon.DefaultClipSize = Game.Player.Character.Weapons.Current.DefaultClipSize;
+            node.CurrentWeapon.MaxAmmo = Game.Player.Character.Weapons.Current.MaxAmmo;
+            node.CurrentWeapon.MaxAmmoInClip = Game.Player.Character.Weapons.Current.MaxAmmoInClip;
+            node.CurrentWeapon.DisplayName = Game.Player.Character.Weapons.Current.DisplayName;
+            node.CurrentWeapon.LocalizedName = Game.Player.Character.Weapons.Current.LocalizedName;
+            node.CurrentWeapon.Group = Game.Player.Character.Weapons.Current.Group;
+            node.CurrentWeapon.Hash = Game.Player.Character.Weapons.Current.Hash;
+            node.CurrentWeapon.Tint = Game.Player.Character.Weapons.Current.Tint;
             #endregion
             #region vehicle
-            node.Player.LastVehicle.AreHighBeamsOn = Game.Player.LastVehicle.AreHighBeamsOn;
-            node.Player.LastVehicle.AreLightsOn = Game.Player.LastVehicle.AreLightsOn;
-            node.Player.LastVehicle.CanTiresBurst = Game.Player.LastVehicle.CanTiresBurst;
-            node.Player.LastVehicle.CanWheelsBreak = Game.Player.LastVehicle.CanWheelsBreak;
-            node.Player.LastVehicle.DropsMoneyOnExplosion = Game.Player.LastVehicle.DropsMoneyOnExplosion;
-            node.Player.LastVehicle.HasBombBay = Game.Player.LastVehicle.HasBombBay;
-            node.Player.LastVehicle.HasForks = Game.Player.LastVehicle.HasForks;
-            node.Player.LastVehicle.HasRoof = Game.Player.LastVehicle.HasRoof;
-            node.Player.LastVehicle.HasSiren = Game.Player.LastVehicle.HasSiren;
-            node.Player.LastVehicle.HasTowArm = Game.Player.LastVehicle.HasTowArm;
-            node.Player.LastVehicle.IsAlarmSet = Game.Player.LastVehicle.IsAlarmSet;
-            node.Player.LastVehicle.IsAlarmSounding = Game.Player.LastVehicle.IsAlarmSounding;
-            node.Player.LastVehicle.IsConvertible = Game.Player.LastVehicle.IsConvertible;
-            node.Player.LastVehicle.IsDamaged = Game.Player.LastVehicle.IsDamaged;
-            node.Player.LastVehicle.IsDriveable = Game.Player.LastVehicle.IsDriveable;
-            node.Player.LastVehicle.IsEngineRunning = Game.Player.LastVehicle.IsEngineRunning;
-            node.Player.LastVehicle.IsEngineStarting = Game.Player.LastVehicle.IsEngineStarting;
-            node.Player.LastVehicle.IsFrontBumperBrokenOff = Game.Player.LastVehicle.IsFrontBumperBrokenOff;
-            node.Player.LastVehicle.IsInBurnout = Game.Player.LastVehicle.IsInBurnout;
-            node.Player.LastVehicle.IsInteriorLightOn = Game.Player.LastVehicle.IsInteriorLightOn;
-            node.Player.LastVehicle.IsLeftHeadLightBroken = Game.Player.LastVehicle.IsLeftHeadLightBroken;
-            node.Player.LastVehicle.IsOnAllWheels = Game.Player.LastVehicle.IsOnAllWheels;
-            node.Player.LastVehicle.IsRearBumperBrokenOff = Game.Player.LastVehicle.IsRearBumperBrokenOff;
-            node.Player.LastVehicle.IsRightHeadLightBroken = Game.Player.LastVehicle.IsRightHeadLightBroken;
-            node.Player.LastVehicle.IsSearchLightOn = Game.Player.LastVehicle.IsSearchLightOn;
-            node.Player.LastVehicle.IsSirenActive = Game.Player.LastVehicle.IsSirenActive;
-            node.Player.LastVehicle.IsStolen = Game.Player.LastVehicle.IsStolen;
-            node.Player.LastVehicle.IsStopped = Game.Player.LastVehicle.IsStopped;
-            node.Player.LastVehicle.IsStoppedAtTrafficLights = Game.Player.LastVehicle.IsStoppedAtTrafficLights;
-            node.Player.LastVehicle.IsTaxiLightOn = Game.Player.LastVehicle.IsTaxiLightOn;
-            node.Player.LastVehicle.IsWanted = Game.Player.LastVehicle.IsWanted;
-            node.Player.LastVehicle.NeedsToBeHotwired = Game.Player.LastVehicle.NeedsToBeHotwired;
-            node.Player.LastVehicle.PreviouslyOwnedByPlayer = Game.Player.LastVehicle.PreviouslyOwnedByPlayer;
-            node.Player.LastVehicle.ProvidesCover = Game.Player.LastVehicle.ProvidesCover;
-            node.Player.LastVehicle.Acceleration = Game.Player.LastVehicle.Acceleration;
-            node.Player.LastVehicle.BodyHealth = Game.Player.LastVehicle.BodyHealth;
-            node.Player.LastVehicle.BrakePower = Game.Player.LastVehicle.BrakePower;
-            node.Player.LastVehicle.Clutch = Game.Player.LastVehicle.Clutch;
-            node.Player.LastVehicle.CurrentRPM = Game.Player.LastVehicle.CurrentRPM;
-            node.Player.LastVehicle.DirtLevel = Game.Player.LastVehicle.DirtLevel;
-            node.Player.LastVehicle.EngineHealth = Game.Player.LastVehicle.EngineHealth;
-            node.Player.LastVehicle.EnginePowerMultiplier = Game.Player.LastVehicle.EnginePowerMultiplier;
-            node.Player.LastVehicle.EngineTemperature = Game.Player.LastVehicle.EngineTemperature;
-            node.Player.LastVehicle.FuelLevel = Game.Player.LastVehicle.FuelLevel;
-            node.Player.LastVehicle.HeliBladesSpeed = Game.Player.LastVehicle.HeliBladesSpeed;
-            node.Player.LastVehicle.HeliEngineHealth = Game.Player.LastVehicle.HeliEngineHealth;
-            node.Player.LastVehicle.HeliMainRotorHealth = Game.Player.LastVehicle.HeliMainRotorHealth;
-            node.Player.LastVehicle.HeliTailRotorHealth = Game.Player.LastVehicle.HeliTailRotorHealth;
-            node.Player.LastVehicle.LightsMultiplier = Game.Player.LastVehicle.LightsMultiplier;
-            node.Player.LastVehicle.LodMultiplier = Game.Player.LastVehicle.LodMultiplier;
-            node.Player.LastVehicle.MaxBraking = Game.Player.LastVehicle.MaxBraking;
-            node.Player.LastVehicle.MaxTraction = Game.Player.LastVehicle.MaxTraction;
-            node.Player.LastVehicle.OilLevel = Game.Player.LastVehicle.OilLevel;
-            node.Player.LastVehicle.OilVolume = Game.Player.LastVehicle.OilVolume;
-            node.Player.LastVehicle.PetrolTankHealth = Game.Player.LastVehicle.PetrolTankHealth;
-            node.Player.LastVehicle.PetrolTankVolume = Game.Player.LastVehicle.PetrolTankVolume;
-            node.Player.LastVehicle.SteeringAngle = Game.Player.LastVehicle.SteeringAngle;
-            node.Player.LastVehicle.SteeringScale = Game.Player.LastVehicle.SteeringScale;
-            node.Player.LastVehicle.Throttle = Game.Player.LastVehicle.Throttle;
-            node.Player.LastVehicle.ThrottlePower = Game.Player.LastVehicle.ThrottlePower;
-            node.Player.LastVehicle.Turbo = Game.Player.LastVehicle.Turbo;
-            node.Player.LastVehicle.WheelSpeed = Game.Player.LastVehicle.WheelSpeed;
-            node.Player.LastVehicle.AlarmTimeLeft = Game.Player.LastVehicle.AlarmTimeLeft;
-            node.Player.LastVehicle.CurrentGear = Game.Player.LastVehicle.CurrentGear;
-            node.Player.LastVehicle.Gears = Game.Player.LastVehicle.Gears;
-            node.Player.LastVehicle.HighGear = Game.Player.LastVehicle.HighGear;
-            node.Player.LastVehicle.NextGear = Game.Player.LastVehicle.NextGear;
-            node.Player.LastVehicle.PassengerCapacity = Game.Player.LastVehicle.PassengerCapacity;
-            node.Player.LastVehicle.PassengerCount = Game.Player.LastVehicle.PassengerCount;
-            node.Player.LastVehicle.ClassDisplayName = Game.Player.LastVehicle.ClassDisplayName;
-            node.Player.LastVehicle.ClassLocalizedName = Game.Player.LastVehicle.ClassLocalizedName;
-            node.Player.LastVehicle.DisplayName = Game.Player.LastVehicle.DisplayName;
-            node.Player.LastVehicle.LocalizedName = Game.Player.LastVehicle.LocalizedName;
-            node.Player.LastVehicle.ClassType = Game.Player.LastVehicle.ClassType;
+            node.LastVehicle.AreHighBeamsOn = Game.Player.LastVehicle.AreHighBeamsOn;
+            node.LastVehicle.AreLightsOn = Game.Player.LastVehicle.AreLightsOn;
+            node.LastVehicle.CanTiresBurst = Game.Player.LastVehicle.CanTiresBurst;
+            node.LastVehicle.CanWheelsBreak = Game.Player.LastVehicle.CanWheelsBreak;
+            node.LastVehicle.IsAlarmSet = Game.Player.LastVehicle.IsAlarmSet;
+            node.LastVehicle.IsAlarmSounding = Game.Player.LastVehicle.IsAlarmSounding;
+            node.LastVehicle.IsConvertible = Game.Player.LastVehicle.IsConvertible;
+            node.LastVehicle.IsDamaged = Game.Player.LastVehicle.IsDamaged;
+            node.LastVehicle.IsDriveable = Game.Player.LastVehicle.IsDriveable;
+            node.LastVehicle.IsEngineRunning = Game.Player.LastVehicle.IsEngineRunning;
+            node.LastVehicle.IsFrontBumperBrokenOff = Game.Player.LastVehicle.IsFrontBumperBrokenOff;
+            node.LastVehicle.IsInBurnout = Game.Player.LastVehicle.IsInBurnout;
+            node.LastVehicle.IsInteriorLightOn = Game.Player.LastVehicle.IsInteriorLightOn;
+            node.LastVehicle.IsLeftHeadLightBroken = Game.Player.LastVehicle.IsLeftHeadLightBroken;
+            node.LastVehicle.IsOnAllWheels = Game.Player.LastVehicle.IsOnAllWheels;
+            node.LastVehicle.IsRearBumperBrokenOff = Game.Player.LastVehicle.IsRearBumperBrokenOff;
+            node.LastVehicle.IsRightHeadLightBroken = Game.Player.LastVehicle.IsRightHeadLightBroken;
+            node.LastVehicle.IsSearchLightOn = Game.Player.LastVehicle.IsSearchLightOn;
+            node.LastVehicle.IsSirenActive = Game.Player.LastVehicle.IsSirenActive;
+            node.LastVehicle.IsStolen = Game.Player.LastVehicle.IsStolen;
+            node.LastVehicle.IsStopped = Game.Player.LastVehicle.IsStopped;
+            node.LastVehicle.IsStoppedAtTrafficLights = Game.Player.LastVehicle.IsStoppedAtTrafficLights;
+            node.LastVehicle.IsTaxiLightOn = Game.Player.LastVehicle.IsTaxiLightOn;
+            node.LastVehicle.IsWanted = Game.Player.LastVehicle.IsWanted;
+            node.LastVehicle.NeedsToBeHotwired = Game.Player.LastVehicle.NeedsToBeHotwired;
+            node.LastVehicle.ProvidesCover = Game.Player.LastVehicle.ProvidesCover;
+            node.LastVehicle.Acceleration = Game.Player.LastVehicle.Acceleration;
+            node.LastVehicle.BodyHealth = Game.Player.LastVehicle.BodyHealth;
+            node.LastVehicle.BrakePower = Game.Player.LastVehicle.BrakePower;
+            node.LastVehicle.Clutch = Game.Player.LastVehicle.Clutch;
+            node.LastVehicle.CurrentRPM = Game.Player.LastVehicle.CurrentRPM;
+            node.LastVehicle.DirtLevel = Game.Player.LastVehicle.DirtLevel;
+            node.LastVehicle.EngineHealth = Game.Player.LastVehicle.EngineHealth;
+            node.LastVehicle.EnginePowerMultiplier = Game.Player.LastVehicle.EnginePowerMultiplier;
+            node.LastVehicle.EngineTemperature = Game.Player.LastVehicle.EngineTemperature;
+            node.LastVehicle.FuelLevel = Game.Player.LastVehicle.FuelLevel;
+            node.LastVehicle.HeliBladesSpeed = Game.Player.LastVehicle.HeliBladesSpeed;
+            node.LastVehicle.HeliEngineHealth = Game.Player.LastVehicle.HeliEngineHealth;
+            node.LastVehicle.HeliMainRotorHealth = Game.Player.LastVehicle.HeliMainRotorHealth;
+            node.LastVehicle.HeliTailRotorHealth = Game.Player.LastVehicle.HeliTailRotorHealth;
+            node.LastVehicle.LightsMultiplier = Game.Player.LastVehicle.LightsMultiplier;
+            node.LastVehicle.LodMultiplier = Game.Player.LastVehicle.LodMultiplier;
+            node.LastVehicle.MaxBraking = Game.Player.LastVehicle.MaxBraking;
+            node.LastVehicle.MaxTraction = Game.Player.LastVehicle.MaxTraction;
+            node.LastVehicle.OilLevel = Game.Player.LastVehicle.OilLevel;
+            node.LastVehicle.OilVolume = Game.Player.LastVehicle.OilVolume;
+            node.LastVehicle.PetrolTankHealth = Game.Player.LastVehicle.PetrolTankHealth;
+            node.LastVehicle.PetrolTankVolume = Game.Player.LastVehicle.PetrolTankVolume;
+            node.LastVehicle.SteeringAngle = Game.Player.LastVehicle.SteeringAngle;
+            node.LastVehicle.SteeringScale = Game.Player.LastVehicle.SteeringScale;
+            node.LastVehicle.Throttle = Game.Player.LastVehicle.Throttle;
+            node.LastVehicle.ThrottlePower = Game.Player.LastVehicle.ThrottlePower;
+            node.LastVehicle.Turbo = Game.Player.LastVehicle.Turbo;
+            node.LastVehicle.WheelSpeed = Game.Player.LastVehicle.WheelSpeed;
+            node.LastVehicle.AlarmTimeLeft = Game.Player.LastVehicle.AlarmTimeLeft;
+            node.LastVehicle.CurrentGear = Game.Player.LastVehicle.CurrentGear;
+            node.LastVehicle.Gears = Game.Player.LastVehicle.Gears;
+            node.LastVehicle.HighGear = Game.Player.LastVehicle.HighGear;
+            node.LastVehicle.NextGear = Game.Player.LastVehicle.NextGear;
+            node.LastVehicle.PassengerCapacity = Game.Player.LastVehicle.PassengerCapacity;
+            node.LastVehicle.PassengerCount = Game.Player.LastVehicle.PassengerCount;
+            node.LastVehicle.ClassDisplayName = Game.Player.LastVehicle.ClassDisplayName;
+            node.LastVehicle.ClassLocalizedName = Game.Player.LastVehicle.ClassLocalizedName;
+            node.LastVehicle.DisplayName = Game.Player.LastVehicle.DisplayName;
+            node.LastVehicle.LocalizedName = Game.Player.LastVehicle.LocalizedName;
+            node.LastVehicle.ClassType = Game.Player.LastVehicle.ClassType;
             #endregion
             #region game
             node.Game.IsNightVisionActive = Game.IsNightVisionActive;

@@ -8,6 +8,8 @@ namespace AuroraGSI_GTAV
         public readonly ProviderNode Provider = new ProviderNode();
         public readonly PlayerNode Player = new PlayerNode();
         public readonly GameNode Game = new GameNode();
+        public readonly VehicleNode LastVehicle = new VehicleNode();
+        public readonly WeaponNode CurrentWeapon = new WeaponNode();
     }
 
     public class ProviderNode
@@ -18,8 +20,6 @@ namespace AuroraGSI_GTAV
 
     public class PlayerNode
     {
-        public VehicleNode LastVehicle = new VehicleNode();
-        public WeaponNode CurrentWeapon = new WeaponNode();
         public bool CanControlCharacter;
         public bool CanStartMission;
         public bool IsAiming;
@@ -67,6 +67,7 @@ namespace AuroraGSI_GTAV
         public bool IsConvertible;
         public bool IsDamaged;
         public bool IsDriveable;
+        public bool IsEngineRunning;
         public bool IsFrontBumperBrokenOff;
         public bool IsInBurnout;
         public bool IsInteriorLightOn;
